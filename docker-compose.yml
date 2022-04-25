@@ -1,28 +1,24 @@
-version: "3.8"
+version: '3.7'
 
 services:
-  service1:
-    build:
-      context: .
-      target: service1
-      dockerfile: Dockerfile
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      - 3000:3000
-  service2:
-    build:
-      context: .
-      target: service2
-      dockerfile: Dockerfile
+      - 9090:9090
+    restart: always
+  grafana:
+    image: grafana/grafana:latest
     ports:
-      - 3001:3001
-  service3:
-    build:
-      context: .
-      target: service3
-      dockerfile: Dockerfile
-    ports:
-      - 3002:3002
+      - 9999:3000
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    restart: always
   zipkin:
-    image: openzipkin/zipkin
+    image: openzipkin/zipkin:latest
+    environment:
+      - STORAGE_TYPE=mem
+      - MYSQL_HOST=mysql
     ports:
       - 9411:9411
